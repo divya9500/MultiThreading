@@ -1,0 +1,145 @@
+
+//MultiThreading
+
+
+package Hacker;
+
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Scanner;
+
+
+class Abc implements Runnable{
+    int thread, d1,d2,i1;
+    Abc(int thread,int d1,int d2,int i1){
+        this.thread=thread;
+        this.d1=d1;
+        this.d2=d2;
+        this.i1=i1;
+    }
+
+    static HashSet<String> hash=new HashSet<String>();
+    @Override
+    public void run() {
+
+
+        String search[]= {"consectetur","vulputate","morbi","Quam","pharetra","condimentum","sadasdasdasd"};
+        File file1= new File("D:\\New folder");
+        File arr[] = file1.listFiles();
+        for(int i=d1;i<d2;i++) {
+            String path=arr[i].getAbsolutePath();
+            try {
+                FileReader file=new FileReader(new File(path));
+                BufferedReader bf=new BufferedReader(file);
+                String line=bf.readLine();
+                while(line!=null) {
+
+                    for(int j=0;j<search.length;j++) {
+                        if(line.contains(search[j])) {
+                            hash.add(search[j]);
+
+                        }
+                    }
+                    line=bf.readLine();
+                }
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
+
+        }
+        int ab[]=new int[search.length];
+        if(i1+1==thread) {
+            for(int i=0;i<search.length;i++) {
+                for(String s : hash) {
+                    if(search[i].equals(s)) {
+                        System.out.println(search[i]+" Match");
+                        ab[i]=1;
+                    }
+
+                }
+                if(ab[i]!=1)
+                    System.out.println(search[i]+" Not Match");
+
+
+            }
+        }
+    }
+}
+
+
+
+class syn{
+
+    synchronized int[] method(int thread){
+        File file1= new File("D:\\New folder");
+        File arr[] = file1.listFiles();
+
+        int x[]=new int[thread];
+        int len=arr.length;
+        int startlen=0,endLen=0;
+        for(int i=1;i<=thread;i++){
+            startlen=len/thread;
+            endLen=(startlen+endLen)-endLen;
+            startlen=endLen;
+
+            if(len%thread!=0 && i==thread){
+
+                endLen= len%thread+startlen;
+            }
+
+            x[i-1]=endLen;
+        }
+
+
+        return x;
+    }
+
+
+}
+public class Abcde  {
+
+    public static void main(String[] args) throws Exception {
+
+        long start,end;
+
+
+        Scanner sc=new Scanner(System.in);
+        System.out.println("Enter the number of threads:");
+        int thread=sc.nextInt();
+
+        start=System.currentTimeMillis();
+
+          syn Syn=new syn();
+           int x[]=  Syn.method(thread);
+           //System.out.println(Arrays.toString(x));
+
+        int d2,d3=0;
+        Thread t = null;
+        for(int i=0;i<thread;i++) {
+            if(i==0) {
+                d2=i;
+                d3=x[i];
+            }
+            else {
+                d2=d3;
+                d3=d2+x[i];
+            }
+            Runnable b=new Abc(thread,d2,d3,i);
+            t=new Thread(b);
+            t.start();
+
+        }
+        t.join();
+
+       end=System.currentTimeMillis();
+            System.out.println(end-start+" ms");
+        }
+
+    }
+
+
